@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Mini Accessibility Checker",
+  "version": "1.0",
+  "description": "Simple web accessibility scanner",
+  "permissions": ["activeTab", "scripting"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+.a11y-highlight {
+  outline: 3px solid red !important;
+}
+
+#a11y-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 320px;
+  max-height: 450px;
+  overflow-y: auto;
+  background: #121212;
+  color: #ffffff;
+  padding: 15px;
+  z-index: 999999;
+  border-radius: 10px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+#a11y-panel h3 {
+  margin-top: 0;
+  color: #00ffc8;
+}
+
+#a11y-panel hr {
+  border: 1px solid #333;
+}
