@@ -45,7 +45,29 @@
       description: "Link has no descriptive text",
       selector: "a",
       test: (el) => el.innerText.trim() === ""
-    }
+    },
+
+    {
+  id: "COLOR_CONTRAST_001",
+  wcag: "1.4.3",
+  level: "AA",
+  impact: 3,
+  description: "Insufficient color contrast (less than 4.5:1)",
+  selector: "p, span, a, button, li, td, th, h1, h2, h3, h4, h5, h6",
+  test: (el) => {
+    if (!el || !el.innerText || !el.innerText.trim()) return false;
+
+    const style = window.getComputedStyle(el);
+    const fg = style.color;
+    const bg = getBackgroundColor(el);
+
+    if (!fg || !bg) return false;
+
+    const ratio = getContrastRatio(fg, bg);
+
+    return ratio < 4.5;
+  }
+}
   ];
 
   const issues = [];
@@ -53,7 +75,50 @@
   function highlight(element, rule) {
     element.classList.add("a11y-highlight");
     element.setAttribute("data-wcag", rule.wcag);
+    element.setAttribute("title", rule.description);
   }
+
+  function rgbToArray(rgb) {
+  return rgb.match(/\d+/g).map(Number);
+}
+
+function luminance(r, g, b) {
+  const a = [r, g, b].map(v => {
+    v /= 255;
+    return v <= 0.03928
+      ? v / 12.92
+      : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+
+  return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+}
+
+function getContrastRatio(fg, bg) {
+  const [r1, g1, b1] = rgbToArray(fg);
+  const [r2, g2, b2] = rgbToArray(bg);
+
+  const L1 = luminance(r1, g1, b1);
+  const L2 = luminance(r2, g2, b2);
+
+  const lighter = Math.max(L1, L2);
+  const darker = Math.min(L1, L2);
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function getBackgroundColor(el) {
+  let bg = window.getComputedStyle(el).backgroundColor;
+
+  while (
+    (bg === "rgba(0, 0, 0, 0)" || bg === "transparent") &&
+    el.parentElement
+  ) {
+    el = el.parentElement;
+    bg = window.getComputedStyle(el).backgroundColor;
+  }
+
+  return bg;
+}
 
   function runScanner() {
     rules.forEach(rule => {
@@ -135,4 +200,3 @@
   createPanel();
 
 })();
-
