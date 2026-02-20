@@ -1,5 +1,7 @@
+
 .a11y-highlight {
   outline: 3px solid red !important;
+  outline-offset: 2px;
 }
 
 #a11y-panel {
