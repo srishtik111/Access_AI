@@ -7,7 +7,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": ["jspdf.min.js","axe.min.js","content.js"],
       "css": ["styles.css"]
     }
   ]
