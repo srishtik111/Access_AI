@@ -28,3 +28,6 @@
 #a11y-panel hr {
   border: 1px solid #333;
 }
+.hidden {
+  display: none;
+}

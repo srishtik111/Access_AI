@@ -1,206 +1,3 @@
-// (function () {
-
-//   const rules = [
-//     {
-//       id: "IMG_ALT_001",
-//       wcag: "1.1.1",
-//       level: "A",
-//       impact: 3,
-//       description: "Image missing alternative text",
-//       selector: "img",
-//       test: (el) =>
-//         !el.hasAttribute("alt") || el.getAttribute("alt").trim() === ""
-//     },
-
-//     {
-//       id: "INPUT_LABEL_001",
-//       wcag: "1.3.1",
-//       level: "A",
-//       impact: 3,
-//       description: "Input missing associated label",
-//       selector: "input",
-//       test: (el) => {
-//         const id = el.id;
-//         const label = document.querySelector(`label[for="${id}"]`);
-//         return !label;
-//       }
-//     },
-
-//     {
-//       id: "BUTTON_NAME_001",
-//       wcag: "4.1.2",
-//       level: "A",
-//       impact: 2,
-//       description: "Button missing accessible name",
-//       selector: "button",
-//       test: (el) =>
-//         !el.innerText.trim() && !el.getAttribute("aria-label")
-//     },
-
-//     {
-//       id: "EMPTY_LINK_001",
-//       wcag: "2.4.4",
-//       level: "A",
-//       impact: 2,
-//       description: "Link has no descriptive text",
-//       selector: "a",
-//       test: (el) => el.innerText.trim() === ""
-//     },
-
-//     {
-//   id: "COLOR_CONTRAST_001",
-//   wcag: "1.4.3",
-//   level: "AA",
-//   impact: 3,
-//   description: "Insufficient color contrast (less than 4.5:1)",
-//   selector: "p, span, a, button, li, td, th, h1, h2, h3, h4, h5, h6",
-//   test: (el) => {
-//     if (!el || !el.innerText || !el.innerText.trim()) return false;
-
-//     const style = window.getComputedStyle(el);
-//     const fg = style.color;
-//     const bg = getBackgroundColor(el);
-
-//     if (!fg || !bg) return false;
-
-//     const ratio = getContrastRatio(fg, bg);
-
-//     return ratio < 4.5;
-//   }
-// }
-//   ];
-
-//   const issues = [];
-
-//   function highlight(element, rule) {
-//     element.classList.add("a11y-highlight");
-//     element.setAttribute("data-wcag", rule.wcag);
-//     element.setAttribute("title", rule.description);
-//   }
-
-//   function rgbToArray(rgb) {
-//   return rgb.match(/\d+/g).map(Number);
-// }
-
-// function luminance(r, g, b) {
-//   const a = [r, g, b].map(v => {
-//     v /= 255;
-//     return v <= 0.03928
-//       ? v / 12.92
-//       : Math.pow((v + 0.055) / 1.055, 2.4);
-//   });
-
-//   return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
-// }
-
-// function getContrastRatio(fg, bg) {
-//   const [r1, g1, b1] = rgbToArray(fg);
-//   const [r2, g2, b2] = rgbToArray(bg);
-
-//   const L1 = luminance(r1, g1, b1);
-//   const L2 = luminance(r2, g2, b2);
-
-//   const lighter = Math.max(L1, L2);
-//   const darker = Math.min(L1, L2);
-
-//   return (lighter + 0.05) / (darker + 0.05);
-// }
-
-// function getBackgroundColor(el) {
-//   let bg = window.getComputedStyle(el).backgroundColor;
-
-//   while (
-//     (bg === "rgba(0, 0, 0, 0)" || bg === "transparent") &&
-//     el.parentElement
-//   ) {
-//     el = el.parentElement;
-//     bg = window.getComputedStyle(el).backgroundColor;
-//   }
-
-//   return bg;
-// }
-
-//   function runScanner() {
-//     rules.forEach(rule => {
-//       const elements = document.querySelectorAll(rule.selector);
-
-//       elements.forEach(el => {
-//         if (rule.test(el)) {
-//           issues.push({
-//             id: rule.id,
-//             wcag: rule.wcag,
-//             level: rule.level,
-//             impact: rule.impact,
-//             description: rule.description
-//           });
-
-//           highlight(el, rule);
-//         }
-//       });
-//     });
-//   }
-
-//   function calculateScore() {
-//     const maxScore = 100;
-//     const totalImpact = issues.reduce((sum, issue) => sum + issue.impact, 0);
-
-//     const penalty = totalImpact * 2;
-//     let score = maxScore - penalty;
-
-//     if (score < 0) score = 0;
-
-//     return score;
-//   }
-
-//   function getGrade(score) {
-//     if (score >= 90) return "A";
-//     if (score >= 75) return "B";
-//     if (score >= 60) return "C";
-//     return "D";
-//   }
-
-//   function createPanel() {
-//     const score = calculateScore();
-//     const grade = getGrade(score);
-
-//     const grouped = {};
-
-//     issues.forEach(issue => {
-//       if (!grouped[issue.wcag]) {
-//         grouped[issue.wcag] = [];
-//       }
-//       grouped[issue.wcag].push(issue);
-//     });
-
-//     const panel = document.createElement("div");
-//     panel.id = "a11y-panel";
-
-//     panel.innerHTML = `
-//       <h3>Accessibility Report</h3>
-//       <p><strong>Score:</strong> ${score}/100</p>
-//       <p><strong>Grade:</strong> ${grade}</p>
-//       <p><strong>Total Issues:</strong> ${issues.length}</p>
-//       <hr/>
-//       ${Object.keys(grouped).map(wcag => `
-//         <div>
-//           <strong>WCAG ${wcag}</strong>
-//           <ul>
-//             ${grouped[wcag].map(i => `
-//               <li>${i.description} (Level ${i.level})</li>
-//             `).join("")}
-//           </ul>
-//         </div>
-//       `).join("")}
-//     `;
-
-//     document.body.appendChild(panel);
-//   }
-
-//   runScanner();
-//   createPanel();
-
-// })();
-
 
 
 //////////////////////////////////
@@ -253,15 +50,37 @@
   // ---------------- RULES ----------------
   const rules = [
     {
-      id: "IMG_ALT_001",
-      wcag: "1.1.1",
-      level: "A",
-      impact: 3,
-      description: "Image missing alternative text",
-      selector: "img",
-      test: (el) =>
-        !el.hasAttribute("alt") || el.getAttribute("alt").trim() === ""
-    },
+  id: "IMG_ALT_001",
+  wcag: "1.1.1",
+  level: "A",
+  impact: 3,
+  description: "Image missing or invalid alternative text",
+  selector: "img",
+  test: (el) => {
+    // 1. Ignore hidden images
+    if (el.getAttribute("aria-hidden") === "true") return false;
+    if (el.hidden) return false;
+
+    // 2. Check alt attribute
+    const alt = el.getAttribute("alt");
+
+    // No alt at all → issue
+    if (alt === null) return true;
+
+    // Empty alt is allowed ONLY for decorative images
+    if (alt.trim() === "") {
+      // If it's meaningful (has role or clickable), flag it
+      if (el.closest("a") || el.closest("button")) return true;
+      return false;
+    }
+
+    // Bad alt text patterns
+    const badWords = ["image", "photo", "picture", "img"];
+    if (badWords.includes(alt.toLowerCase().trim())) return true;
+
+    return false;
+  }
+},
     {
       id: "INPUT_LABEL_001",
       wcag: "1.3.1",
@@ -297,9 +116,30 @@
 
   // ---------------- HIGHLIGHT ----------------
   function highlight(el, severity, message) {
-    el.style.outline = `3px solid ${getColor(severity)}`;
-    el.title = message;
-  }
+  el.style.outline = `3px solid ${getColor(severity)}`;
+  el.style.position = "relative";
+
+  // Remove old badge if exists
+  const oldBadge = el.querySelector(".a11y-badge");
+  if (oldBadge) oldBadge.remove();
+
+  // Create badge
+  const badge = document.createElement("div");
+  badge.className = "a11y-badge";
+  badge.innerText = "ALT";
+  badge.style.position = "absolute";
+  badge.style.top = "0";
+  badge.style.left = "0";
+  badge.style.background = getColor(severity);
+  badge.style.color = "#000";
+  badge.style.fontSize = "10px";
+  badge.style.padding = "2px 4px";
+  badge.style.zIndex = "999999";
+
+  el.appendChild(badge);
+
+  el.title = message;
+}
 
   // ---------------- CUSTOM SCAN ----------------
   function runCustomScanner() {
@@ -395,7 +235,7 @@
   });
 
   y += 5;
-  doc.text("Axe Issues:", 10, y);
+  doc.text("Site Issues:", 10, y);
   y += 8;
 
   if (axeResults) {
@@ -413,19 +253,32 @@
   doc.save("accessibility-report.pdf");
 }
   // ---------------- PANEL ----------------
-  function createPanel() {
+function createPanel() {
   const score = calculateScore();
   const grade = getGrade(score);
 
-  const wcagCounts = {};
+  // ---------------- GROUP CUSTOM ISSUES ----------------
+  const groupedIssues = {};
 
   issues.forEach(i => {
-    wcagCounts[i.wcag] = (wcagCounts[i.wcag] || 0) + 1;
+    if (!groupedIssues[i.id]) {
+      groupedIssues[i.id] = {
+        info: i,
+        count: 0
+      };
+    }
+    groupedIssues[i.id].count++;
   });
+
+  // ---------------- GROUP AXE ISSUES ----------------
+  const groupedAxe = {};
 
   if (axeResults) {
     axeResults.violations.forEach(v => {
-      wcagCounts[v.id] = (wcagCounts[v.id] || 0) + 1;
+      groupedAxe[v.id] = {
+        description: v.description,
+        nodes: v.nodes
+      };
     });
   }
 
@@ -445,45 +298,65 @@
         cursor:pointer;
         border-radius:5px;
         font-weight:bold;
-      ">📄 Download PDF</button>
+      "> Download PDF</button>
 
-      <div style="margin-top:5px;">
+      <div>
         <span style="color:red;">● Critical</span>
         <span style="color:orange; margin-left:10px;">● Moderate</span>
         <span style="color:yellow; margin-left:10px;">● Low</span>
       </div>
     </div>
 
-    <h4>📊 WCAG Breakdown</h4>
-    ${generateChart(wcagCounts)}
+    <hr/>
+
+    <h4> Custom Issues</h4>
+    ${Object.keys(groupedIssues).map(key => {
+      const item = groupedIssues[key];
+      return `
+        <div style="margin-bottom:10px; border-bottom:1px solid #333;">
+          <div style="cursor:pointer;" onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <b style="color:${getColor(item.info.severity)}">
+              ${item.info.description}
+            </b>
+            <span> (${item.count} elements)</span>
+          </div>
+
+          <div class="hidden" style="margin-top:5px;">
+            <small>${getAIExplanation(item.info)}</small>
+          </div>
+        </div>
+      `;
+    }).join("")}
 
     <hr/>
 
-    <h4>Issues</h4>
-    <ul>
-      ${issues.map(i => `
-        <li style="color:${getColor(i.severity)}; margin-bottom:8px;">
-          <b>${i.description}</b><br/>
-          <small>${getAIExplanation(i)}</small>
-        </li>
-      `).join("")}
-    </ul>
+    <h4>🛠 Axe Issues</h4>
+    ${Object.keys(groupedAxe).map(key => {
+      const item = groupedAxe[key];
+      return `
+        <div style="margin-bottom:10px; border-bottom:1px solid #333;">
+          <div style="cursor:pointer;" onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <b>${key}</b> (${item.nodes.length} elements)
+          </div>
 
-    <hr/>
+          <div class="hidden" style="margin-top:5px;">
+            <small>${item.description}</small>
 
-    <h4>Axe Issues</h4>
-    <ul>
-      ${axeResults ? axeResults.violations.map(v => `
-        <li style="cursor:pointer; margin-bottom:6px;" data-target="${v.nodes[0].target[0]}">
-          <b>${v.id}</b> - ${v.description}
-        </li>
-      `).join("") : "<li>No issues</li>"}
-    </ul>
+            ${item.nodes.map(n => `
+              <div style="cursor:pointer; margin-top:5px;"
+                   data-target="${n.target[0]}">
+                🔍 ${n.target[0]}
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }).join("")}
   `;
 
   document.body.appendChild(panel);
 
-  // 🔥 Click to focus element
+  // Click to focus elements
   panel.querySelectorAll("[data-target]").forEach(el => {
     el.addEventListener("click", () => {
       const target = document.querySelector(el.dataset.target);
@@ -494,7 +367,7 @@
     });
   });
 
-  // 📄 PDF DOWNLOAD BUTTON
+  // PDF button
   document.getElementById("download-report").addEventListener("click", () => {
     downloadPDFReport(score, grade, issues, axeResults);
   });
